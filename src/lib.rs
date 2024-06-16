@@ -167,3 +167,8 @@ mod port;
 ///
 /// [Sabertooth 2x32]: https://www.dimensionengineering.com/products/sabertooth2x32
 pub mod sabertooth2x32;
+
+/// Interface for the [Sabertooth 2x60].
+///
+/// [Sabertooth 2x60]: https://www.dimensionengineering.com/products/sabertooth2x60
+pub mod sabertooth2x60;

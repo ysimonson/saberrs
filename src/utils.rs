@@ -1,3 +1,4 @@
+use std::ops::{Add, Div, Mul, Sub};
 use crate::error::{Error, Result};
 
 pub const RANGE_MAX: i32 = 2047;
@@ -37,4 +38,55 @@ pub fn ratio_to_value(ratio: f32) -> Result<i32> {
 
 pub fn value_to_ratio(value: i32) -> f32 {
     value as f32 / RANGE_MAX as f32
+}
+
+pub fn map_range<T: Copy>(from_range: (T, T), to_range: (T, T), s: T) -> T
+where
+    T: Add<T, Output = T> + Sub<T, Output = T> + Mul<T, Output = T> + Div<T, Output = T>,
+{
+    to_range.0 + (s - from_range.0) * (to_range.1 - to_range.0) / (from_range.1 - from_range.0)
+}
+
+#[cfg(test)]
+mod test {
+    use super::map_range;
+
+    macro_rules! assert_delta {
+        ($x:expr, $y:expr, $d:expr) => {
+            if !($x - $y < $d || $y - $x < $d) {
+                panic!();
+            }
+        };
+    }
+
+    #[test]
+    fn test_map_range() {
+        assert_delta!(map_range((1200.0, 1500.0), (0.0, 1.0), 1200.0f32), 0.0f32, 0.001);
+        assert_delta!(map_range((1200.0, 1500.0), (0.0, 1.0), 1350.0f32), 0.5f32, 0.001);
+        assert_delta!(map_range((1200.0, 1500.0), (0.0, 1.0), 1500.0f32), 1.0f32, 0.001);
+        assert_delta!(map_range((-1.0, 1.0), (-120.0f32, 120.0f32), -1.0), -120.0f32, 0.001);
+        assert_delta!(map_range((-1.0, 1.0), (-120.0f32, 120.0f32), 0.0), 0.0f32, 0.001);
+        assert_delta!(map_range((-1.0, 1.0), (-120.0f32, 120.0f32), 1.0), 120.0f32, 0.001);
+
+        assert_eq!(
+            map_range(
+                (i8::min_value() as i32, i8::max_value() as i32),
+                (204i32, 409i32),
+                -128i32,
+            ),
+            204
+        );
+        assert_eq!(
+            map_range((i8::min_value() as i32, i8::max_value() as i32), (204i32, 409i32), 0i32,),
+            306
+        );
+        assert_eq!(
+            map_range(
+                (i8::min_value() as i32, i8::max_value() as i32),
+                (204i32, 409i32),
+                127i32,
+            ),
+            409
+        );
+    }
 }
