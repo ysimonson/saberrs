@@ -1,5 +1,5 @@
-use std::ops::{Add, Div, Mul, Sub};
 use crate::error::{Error, Result};
+use std::ops::{Add, Div, Mul, Sub};
 
 pub const RANGE_MAX: i32 = 2047;
 pub const RANGE_MIN: i32 = -2047;
@@ -61,12 +61,36 @@ mod test {
 
     #[test]
     fn test_map_range() {
-        assert_delta!(map_range((1200.0, 1500.0), (0.0, 1.0), 1200.0f32), 0.0f32, 0.001);
-        assert_delta!(map_range((1200.0, 1500.0), (0.0, 1.0), 1350.0f32), 0.5f32, 0.001);
-        assert_delta!(map_range((1200.0, 1500.0), (0.0, 1.0), 1500.0f32), 1.0f32, 0.001);
-        assert_delta!(map_range((-1.0, 1.0), (-120.0f32, 120.0f32), -1.0), -120.0f32, 0.001);
-        assert_delta!(map_range((-1.0, 1.0), (-120.0f32, 120.0f32), 0.0), 0.0f32, 0.001);
-        assert_delta!(map_range((-1.0, 1.0), (-120.0f32, 120.0f32), 1.0), 120.0f32, 0.001);
+        assert_delta!(
+            map_range((1200.0, 1500.0), (0.0, 1.0), 1200.0f32),
+            0.0f32,
+            0.001
+        );
+        assert_delta!(
+            map_range((1200.0, 1500.0), (0.0, 1.0), 1350.0f32),
+            0.5f32,
+            0.001
+        );
+        assert_delta!(
+            map_range((1200.0, 1500.0), (0.0, 1.0), 1500.0f32),
+            1.0f32,
+            0.001
+        );
+        assert_delta!(
+            map_range((-1.0, 1.0), (-120.0f32, 120.0f32), -1.0),
+            -120.0f32,
+            0.001
+        );
+        assert_delta!(
+            map_range((-1.0, 1.0), (-120.0f32, 120.0f32), 0.0),
+            0.0f32,
+            0.001
+        );
+        assert_delta!(
+            map_range((-1.0, 1.0), (-120.0f32, 120.0f32), 1.0),
+            120.0f32,
+            0.001
+        );
 
         assert_eq!(
             map_range(
@@ -77,7 +101,11 @@ mod test {
             204
         );
         assert_eq!(
-            map_range((i8::min_value() as i32, i8::max_value() as i32), (204i32, 409i32), 0i32,),
+            map_range(
+                (i8::min_value() as i32, i8::max_value() as i32),
+                (204i32, 409i32),
+                0i32,
+            ),
             306
         );
         assert_eq!(

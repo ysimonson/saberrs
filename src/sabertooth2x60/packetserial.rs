@@ -83,7 +83,12 @@ impl<T: SabertoothSerial> PacketSerial<T> {
         Ok(self.dev.write_all(&txdata)?)
     }
 
-    fn write_motor_command(&mut self, forward_command: u8, backward_command: u8, value: i8) -> Result<()> {
+    fn write_motor_command(
+        &mut self,
+        forward_command: u8,
+        backward_command: u8,
+        value: i8,
+    ) -> Result<()> {
         if value >= 0 {
             self.write(forward_command, min(127i8, value) as u8)
         } else {
@@ -116,13 +121,11 @@ where
 impl<T: SabertoothSerial> Sabertooth2x60 for PacketSerial<T> {
     fn set_serial_timeout(&mut self, ms: u16) -> Result<()> {
         if ms > MAX_SERIAL_TIMEOUT_MS {
-            return Err(Error::InvalidInput(format!("timeout must be less than or equal to {MAX_SERIAL_TIMEOUT_MS}")));
+            return Err(Error::InvalidInput(format!(
+                "timeout must be less than or equal to {MAX_SERIAL_TIMEOUT_MS}"
+            )));
         }
-        let units = if ms > 0 && ms < 100 {
-            1
-        } else {
-            ms / 100
-        };
+        let units = if ms > 0 && ms < 100 { 1 } else { ms / 100 };
         let data = utils::map_range((0, MAX_SERIAL_TIMEOUT_MS), (0, 127), units);
         self.write(14, data as u8)
     }
@@ -134,7 +137,7 @@ impl<T: SabertoothSerial> Sabertooth2x60 for PacketSerial<T> {
             19200 => 3,
             38400 => 4,
             115200 => 5,
-            _ => return Err(Error::InvalidInput("invalid baud rate".to_string()))
+            _ => return Err(Error::InvalidInput("invalid baud rate".to_string())),
         };
         self.write(15, data)?;
         self.dev.set_baud_rate(baud_rate)
