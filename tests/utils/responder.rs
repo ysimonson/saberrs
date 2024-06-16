@@ -82,10 +82,10 @@ impl Responder {
     fn assert_next_byte(&mut self, received: u8) {
         let expected_byte = self.expected.pop_front().expect("Received too many bytes");
         if received != expected_byte {
-            panic!(format!(
+            panic!(
                 "Expected {:#02x} ({:?}) but received {:#02x} ({:?})",
                 expected_byte, expected_byte as char, received, received as char
-            ))
+            )
         }
         if self.must_respond(received) {
             self.tty

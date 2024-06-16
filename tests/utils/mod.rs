@@ -131,7 +131,7 @@ macro_rules! test_get_method {
                     panic!("{}", e);
                 }
             } else {
-                panic!($responder.join_panic().unwrap_err());
+                panic!("{}", $responder.join_panic().unwrap_err());
             }
         }
     };
