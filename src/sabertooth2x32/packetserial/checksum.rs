@@ -30,7 +30,7 @@ impl PacketSet {
         let mut buf = [0u8; PACKET_SET_SIZE];
         buf[0] = address;
         buf[1] = CMD_NUM_SET;
-        buf[2] = command_value as u8;
+        buf[2] = command_value;
         buf[3] = checksum(&buf[..3]);
         buf[4..6].copy_from_slice(&pack_data_value(data_value as u16));
         buf[6..8].copy_from_slice(&target[..2]);

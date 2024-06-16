@@ -149,8 +149,8 @@ impl<T: SabertoothSerial> PacketSerial<T> {
         Ok(self.dev.write_all(txdata)?)
     }
 
-    fn read_frame(&mut self, mut buf: &mut [u8]) -> Result<()> {
-        self.dev.read_exact(&mut buf)?;
+    fn read_frame(&mut self, buf: &mut [u8]) -> Result<()> {
+        self.dev.read_exact(buf)?;
         dbg_frame!(rx, buf);
         Ok(())
     }

@@ -101,7 +101,7 @@ impl<T: SabertoothSerial> PlainText<T> {
         let mut rxbuf = [0u8; 32];
         let size = self.request(cmdstr.as_bytes(), &mut rxbuf)?;
         let resp = &rxbuf[..size];
-        let splitted = split_response(&resp)?;
+        let splitted = split_response(resp)?;
         if splitted.0 != token || splitted.1 != ch || splitted.2 != prefix {
             let expected = format!("{}{}: {}<value>", token, splitted.1, prefix.unwrap_or(' '));
             let received = String::from_utf8(resp.to_vec()).unwrap_or(format!("{:?}", resp));

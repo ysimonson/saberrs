@@ -18,7 +18,7 @@ macro_rules! match_channel_to {
 }
 
 pub fn ratio_to_value(ratio: f32) -> Result<i32> {
-    if ratio > 1.0 || ratio < -1.0 {
+    if !(-1.0..=1.0).contains(&ratio) {
         return Err(Error::InvalidInput(format!(
             "value ({}) out of range -1.0~1.0",
             ratio
