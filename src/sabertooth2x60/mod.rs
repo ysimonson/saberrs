@@ -31,7 +31,8 @@ pub trait Sabertooth2x60 {
     // This setting determines how long it takes for the motor driver to shut
     // off if it has not received a command recently. Serial Timeout is off by
     // default. This setting does not persist through a power cycle or in any
-    // mode other than packet Serial.
+    // mode other than packet Serial. This value must be less than or equal to
+    // 12700, and is rounded down to a tenth of a second.
     fn set_serial_timeout(&mut self, ms: u16) -> Result<()>;
 
     // This value remains until it is changed and does persist through a power
@@ -46,12 +47,20 @@ pub trait Sabertooth2x60 {
 
     // This adjusts or disables the ramping feature found on the Sabertooth
     // 2x60. This adjustment applies to all modes, even R/C and analog mode.
-    // Lower values mean faster ramping.
+    // Values between 0 and 20 are fast ramp; values between 21 and 40 are slow
+    // ramp; values between 41 and 160 are intermediate ramp. Fast ramping is a
+    // ramp time of 256/(~500*rate). Slow and intermediate ramping are a ramp
+    // time of 256/(15.25*(data/2–10)).
     fn set_ramping(&mut self, rate: u8) -> Result<()>;
 
     // This determines the extent of the Sabertooth's deadband – the range of
     // commands close to "stop" that will be interpreted as stop. This setting
-    // applies to all modes and persists through a power cycle.
+    // applies to all modes and persists through a power cycle. This follows
+    // the formula:
+    //      127-data/2 < motors off < 128+data/2
+    // Thus, a command of 6 would shut the motors off with speed commands
+    // between 124 and 131. A command of 0 sets the deadband to its default,
+    // which is 124 < off < 131 in serial mode.
     fn set_deadband(&mut self, deadband: u8) -> Result<()>;
 
     // Sets the motor 1 value. -128 is full reverse, 127 is full forward.
