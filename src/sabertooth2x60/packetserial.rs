@@ -103,6 +103,16 @@ where
 }
 
 impl<T: SabertoothSerial> Sabertooth2x60 for PacketSerial<T> {
+    fn set_min_voltage(&mut self, units: u8) -> Result<()> {
+        let data = utils::map_range((0, 255), (0, 127), units);
+        self.write(2, data)
+    }
+
+    fn set_max_voltage(&mut self, units: u8) -> Result<()> {
+        let data = utils::map_range((0, 255), (0, 127), units);
+        self.write(3, data)
+    }
+
     fn set_serial_timeout(&mut self, ms: u16) -> Result<()> {
         if ms > MAX_SERIAL_TIMEOUT_MS {
             return Err(Error::InvalidInput(format!(
