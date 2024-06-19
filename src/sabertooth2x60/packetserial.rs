@@ -57,6 +57,7 @@ impl<T: SabertoothSerial> PacketSerial<T> {
     }
 
     fn write(&mut self, command: u8, data: u8) -> Result<()> {
+        debug_assert!(data <= 127);
         let txdata = [
             self.address,
             command,
@@ -139,6 +140,7 @@ impl<T: SabertoothSerial> Sabertooth2x60 for PacketSerial<T> {
 
     fn set_ramping(&mut self, rate: u8) -> Result<()> {
         let data = utils::map_range((0, 255), (0, 80), rate);
+        debug_assert!(data <= 80);
         self.write(16, data)
     }
 
