@@ -30,7 +30,7 @@ impl PacketSerial<SabertoothPort> {
     /// # Example
     ///
     /// ```
-    /// use saberrs::sabertooth2x32::PacketSerial;
+    /// use saberrs::sabertooth2x60::PacketSerial;
     /// let saber = PacketSerial::new("/dev/ttyUSB0");
     /// ```
     pub fn new(port: &str) -> Result<PacketSerial<SabertoothPort>> {
@@ -44,7 +44,7 @@ impl<T: SabertoothSerial> PacketSerial<T> {
     /// # Example
     ///
     /// ```
-    /// use saberrs::sabertooth2x32::PacketSerial;
+    /// use saberrs::sabertooth2x60::PacketSerial;
     /// # use saberrs::{Result, SabertoothPort};
     /// # fn new_saber() -> Result<PacketSerial<SabertoothPort>> {
     /// let saber = PacketSerial::new("/dev/ttyUSB0")?.with_address(129);
