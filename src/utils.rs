@@ -17,6 +17,18 @@ macro_rules! match_channel_to {
     };
 }
 
+#[cfg(debug_assertions)]
+macro_rules! dbg_frame {
+    ($head:ident, $frame:expr) => {
+        debug!("{} = {:?}", stringify!($head), $frame);
+    };
+}
+
+#[cfg(not(debug_assertions))]
+macro_rules! dbg_frame {
+    ($head:ident, $frame:expr) => {};
+}
+
 pub fn ratio_to_value(ratio: f32) -> Result<i32> {
     if !(-1.0..=1.0).contains(&ratio) {
         return Err(Error::InvalidInput(format!(
@@ -47,9 +59,14 @@ where
     to_range.0 + (s - from_range.0) * (to_range.1 - to_range.0) / (from_range.1 - from_range.0)
 }
 
+pub fn checksum(data: &[u8]) -> u8 {
+    let s: u32 = data.iter().map(|&b| u32::from(b)).sum();
+    (s & 0x7f) as u8
+}
+
 #[cfg(test)]
 mod test {
-    use super::map_range;
+    use super::*;
 
     macro_rules! assert_delta {
         ($x:expr, $y:expr, $d:expr) => {
@@ -116,5 +133,10 @@ mod test {
             ),
             409
         );
+    }
+
+    #[test]
+    fn test_checksum() {
+        assert_eq!(0x15, checksum(b"\x80\x81\x04\x07\x09"));
     }
 }

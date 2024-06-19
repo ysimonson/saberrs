@@ -11,25 +11,9 @@ use crate::utils;
 #[cfg(feature = "serialport")]
 use crate::port::sabertoothport::SabertoothPort;
 
-#[cfg(debug_assertions)]
-macro_rules! dbg_frame {
-    ($head:ident, $frame:expr) => {
-        debug!("{} = {:?}", stringify!($head), $frame);
-    };
-}
-
-#[cfg(not(debug_assertions))]
-macro_rules! dbg_frame {
-    ($head:ident, $frame:expr) => {};
-}
-
 /// Default address for packet communication.
 pub const DEFAULT_ADDRESS: u8 = 128;
 pub const MAX_SERIAL_TIMEOUT_MS: u16 = 12700;
-
-fn checksum(address: u8, command: u8, data: u8) -> u8 {
-    address.overflowing_add(command).0.overflowing_add(data).0 & 0x7f
-}
 
 /// Interface using the "Packet Serial" protocol.
 pub struct PacketSerial<T: SabertoothSerial> {
@@ -77,7 +61,7 @@ impl<T: SabertoothSerial> PacketSerial<T> {
             self.address,
             command,
             data,
-            checksum(self.address, command, data),
+            utils::checksum(&[self.address, command, data]),
         ];
         dbg_frame!(tx, txdata);
         Ok(self.dev.write_all(&txdata)?)
@@ -167,15 +151,5 @@ impl<T: SabertoothSerial> Sabertooth2x60 for PacketSerial<T> {
 
     fn turn_mixed(&mut self, value: i8) -> Result<()> {
         self.write_motor_command(10, 11, value)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_checksum() {
-        assert_eq!(0b01000010, checksum(130, 0, 64));
     }
 }

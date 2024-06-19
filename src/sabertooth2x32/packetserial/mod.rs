@@ -12,18 +12,6 @@ use crate::port::sabertoothport::SabertoothPort;
 mod checksum;
 mod crc;
 
-#[cfg(debug_assertions)]
-macro_rules! dbg_frame {
-    ($head:ident, $frame:expr) => {
-        debug!("{} = {:?}", stringify!($head), $frame);
-    };
-}
-
-#[cfg(not(debug_assertions))]
-macro_rules! dbg_frame {
-    ($head:ident, $frame:expr) => {};
-}
-
 /// Default address for packet communication.
 pub const DEFAULT_ADDRESS: u8 = 128;
 
